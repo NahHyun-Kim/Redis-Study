@@ -47,6 +47,7 @@
 	<form name="form" method="post" action="/chat/intro.do">
 	채팅방 이름 : <input type="text" name="room_name" id="room_name" /> <br />
 	채팅자 이름 : <input type="text" name="user_name" id="user_name" /> <br />	
+	<input type="submit" value="입장" />
 	</form>
 </body>
 </html>

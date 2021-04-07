@@ -11,7 +11,7 @@
 <script src="/js/jquery-3.4.1.min.js"></script>
 <script>
 	// html의 모든 객체(태그)들이 로딩이 완료된 경우 실행함
-	#(window).on("load", function() {
+	$(window).on("load", function() {
 		
 		// 화면 로딩이 완료되면 첫번째로 실행함
 		getRoomList();
