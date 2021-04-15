@@ -338,6 +338,7 @@
 				<configuration>
 					<warSourceDirectory>WebContent</warSourceDirectory>
 					<webXml>WebContent/WEB-INF/web.xml</webXml>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
 
