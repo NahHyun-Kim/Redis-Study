@@ -66,7 +66,7 @@ public class MovieService implements IMovieService {
 			pDTO = new MovieDTO(); //수집된 영화정보를 DTO에 저장하기 위해 메모리에 올리기
 			
 			//수집시간을 기본키(pk)로 사용
-			pDTO.setRank_check_time(DateUtil.getDateTime("yyyyMMdd24hmmss"));
+			pDTO.setRank_check_time(DateUtil.getDateTime("yyyyMMdd"));
 			
 			//영화 순위(trim 함수 추가 이유 : trim 함수는 글자의 앞뒤 공백 삭제 역할을 수행하며, 데이터 수집 시,
 			//홈페이지 개발자들을 앞뒤 공백을 집어넣을 수 있어서 추가함
@@ -98,5 +98,7 @@ public class MovieService implements IMovieService {
 		
 		return res;
 	}
+	
+	
 
 }
