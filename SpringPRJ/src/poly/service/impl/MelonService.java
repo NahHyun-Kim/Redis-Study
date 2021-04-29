@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSingerDTO;
 import poly.dto.MelonSongDTO;
 import poly.persistance.mongo.IMelonMapper;
 import poly.service.IMelonService;
@@ -128,6 +129,25 @@ public class MelonService implements IMelonService {
 		}
 		
 		log.info(this.getClass().getName() + ".getSongForSinger End!");
+		
+		return rList;
+	}
+
+	@Override
+	public List<MelonSingerDTO> getRankForSinger() throws Exception {
+
+		//오늘의 랭킹 수집하기
+		this.collectMelonRank();
+		
+		//조회할 컬렉션 이름
+		String colNm = "MelonTOP50_" + DateUtil.getDateTime("yyyyMMdd"); //생성할 컬렉션명
+		
+		//가수별 랭킹 가져오기
+		List<MelonSingerDTO> rList = melonMapper.getRankForSinger(colNm);
+		
+		if(rList == null) {
+			rList = new ArrayList<MelonSingerDTO>();
+		}
 		
 		return rList;
 	}

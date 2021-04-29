@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSingerDTO;
 import poly.dto.MelonSongDTO;
 import poly.service.IMelonService;
 
@@ -110,6 +111,41 @@ public class MelonController {
 		}
 		
 		log.info(this.getClass().getName() + ".getSongForsinger End!");
+		
+		return rList;
+	}
+
+	/**
+	 * 가수별 멜론 랭킹에 많이 등록된 순서대로 가져오는 일반 화면
+	 * */
+	@RequestMapping(value="melon/melonSingerRank")
+	public String melonSingerRank(HttpServletRequest request, HttpServletResponse response) 
+		throws Exception {
+		
+		log.info(this.getClass().getName() + ".melonSingerRank Start!");
+		
+		log.info(this.getClass().getName() + ".melonSingerRank End!");
+		
+		return "/melon/melonSingerRank";
+	}
+	
+	/**
+	 * 가수별 멜론 랭킹에 많이 등록된 순서대로 가져오기
+	 * */
+	@RequestMapping(value="melon/getRankForSinger")
+	@ResponseBody
+	public List<MelonSingerDTO> getRankForSinger(HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+		
+		log.info(this.getClass().getName() + ".getRankForSinger Start!");
+		
+		List<MelonSingerDTO> rList = melonService.getRankForSinger();
+		
+		if (rList == null) {
+			rList = new ArrayList<MelonSingerDTO>();
+		}
+		
+		log.info(this.getClass().getName() + ".getRankForSinger End!");
 		
 		return rList;
 	}

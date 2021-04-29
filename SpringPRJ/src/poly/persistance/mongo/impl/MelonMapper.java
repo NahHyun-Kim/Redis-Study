@@ -1,6 +1,7 @@
 package poly.persistance.mongo.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,12 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import com.mongodb.AggregationOptions;
 import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSingerDTO;
 import poly.dto.MelonSongDTO;
 import poly.persistance.mongo.IMelonMapper;
 import poly.util.CmmUtil;
@@ -169,5 +172,88 @@ public class MelonMapper implements IMelonMapper {
 		
 		return rList;
 	}
+
+	@Override
+	public List<MelonSingerDTO> getRankForSinger(String colNm) throws Exception {
+		log.info(this.getClass().getName() + ".getRankForSinger Start!");
+		
+		//데이터를 가져올 컬렉션 선택
+		DBCollection rCol = mongodb.getCollection(colNm);
+		
+		//쿼리 만들기
+		List<DBObject> pipeline = Arrays.asList(
+				//SQL의 Group by와 같은 역할을 수행하는 MongoDB group 함수 호출
+                new BasicDBObject()
+                        .append("$group", new BasicDBObject()
+                                .append("_id", new BasicDBObject()
+                                        .append("singer", "$singer") //그룹으로 묶을 필드
+                                )
+                                //그룹으로 묶인 함수를 통해 계산할 내용(레코드수 세기)
+                                .append("COUNT(singer)", new BasicDBObject()
+                                        .append("$sum", 1) //count는 레코드별로 1씩 더하는 것과 동일함
+                                )
+                        ), 
+                //project는 결과 보여줄 내용, SQL의 select와 from 절 사이 내용으로 이해하면 편함
+                new BasicDBObject()
+                        .append("$project", new BasicDBObject()
+                                .append("singer", "$_id.singer")
+                                .append("song_cnt", "$COUNT(singer)") //노래 수를 song_cnt 이름으로 출력함
+                                .append("_id", 0)
+                        ), 
+                //SQL의 order by와 같은 역할을 수행하는 MongoDB sort 함수 호출
+                //1차 정렬은 song_cnt인 노래 수가 큰 순서, 2차 정렬은 가수이름의 가나다 순서
+                new BasicDBObject()
+                        .append("$sort", new BasicDBObject()
+                                .append("song_cnt", -1)
+                                .append("singer", 1)
+                        )
+        );
+		
+		//***aggregation 사용 시 , allowDistUse(true)를 통해 디스크 메모리 사용을 허용***
+		AggregationOptions options = AggregationOptions.builder().allowDiskUse(true).build();
+		
+		//쿼리 실행하기
+		Cursor cursor = rCol.aggregate(pipeline, options);
+		
+		//컬렉션으로부터 전체 데이터 가져온 것들을 List형태로 저장하기 위한 변수 선언
+		List<MelonSingerDTO> rList = new ArrayList<MelonSingerDTO>();
+		
+		MelonSingerDTO rDTO = null;
+		
+		int rank = 1; //랭킹
+		
+		while (cursor.hasNext()) {
+			
+			rDTO = new MelonSingerDTO();
+			
+			final DBObject current = cursor.next();
+			
+			String singer = CmmUtil.nvl((String)current.get("singer")); //가수
+			
+			/* mongodb는 방대한 데이터 양을 저장하기 때문에, default값으로 long 형태의 정수값이 저장
+			 * count한 결과를 가져올 때는 int형으로 형변환하여 가져옴
+			 * */
+			int song_cnt = (int)current.get("song_cnt"); //랭크에 올라간 노래의 수
+			
+			log.info("singer : " + singer);
+			log.info("song_cnt : " + song_cnt);
+			
+			rDTO.setRank(rank); //조회된 레코드 순서대로 랭킹을 정의함
+			rDTO.setSinger(singer); 
+			rDTO.setSong_cnt(song_cnt);
+			
+			rList.add(rDTO); //List에 데이터 저장
+			
+			rDTO = null;
+			
+			rank++; //랭킹 값 1씩 증가하기
+		}
+		
+		log.info(this.getClass().getName() + ".getRankForSinger End!");
+		
+		return rList;
+	}
+	
+
 
 }
