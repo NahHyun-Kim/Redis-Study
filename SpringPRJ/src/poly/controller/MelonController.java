@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSongDTO;
 import poly.service.IMelonService;
 
 /*
@@ -77,5 +78,39 @@ public class MelonController {
 		log.info(this.getClass().getName() + ".melonTop50 End!");
 		
 		return "/melon/melonTop50";
+	}
+	
+	/**
+	 * 가수의 노래 데이터 가져오는 일반 화면
+	 * */
+	@RequestMapping(value="melon/melonSongForSinger")
+	public String melonSongForSinger(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		log.info(this.getClass().getName() + ".melonSongForSinger Start!");
+		
+		log.info(this.getClass().getName() + ".melonSongForSinger End!");
+		
+		return "/melon/melonSongForSinger";
+	}
+	
+	/**
+	 * 가수의 노래 데이터 가져오기
+	 * */
+	@RequestMapping(value="melon/getSongForsinger")
+	@ResponseBody
+	public List<MelonSongDTO> getSongForsinger(HttpServletRequest request, HttpServletResponse response) 
+		throws Exception {
+		
+		log.info(this.getClass().getName() + ".getSongForsinger Start!");
+		
+		List<MelonSongDTO> rList = melonService.getSongForSinger();
+		
+		if (rList == null) {
+			rList = new ArrayList<MelonSongDTO>();
+		}
+		
+		log.info(this.getClass().getName() + ".getSongForsinger End!");
+		
+		return rList;
 	}
 }

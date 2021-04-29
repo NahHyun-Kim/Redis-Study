@@ -17,6 +17,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSongDTO;
 import poly.persistance.mongo.IMelonMapper;
 import poly.service.IMelonService;
 import poly.util.DateUtil;
@@ -107,6 +108,26 @@ public class MelonService implements IMelonService {
 		}
 		
 		log.info(this.getClass().getName() + ".getRank End!");
+		
+		return rList;
+	}
+
+	@Override
+	public List<MelonSongDTO> getSongForSinger() throws Exception {
+
+		log.info(this.getClass().getName() + ".getSongForSinger Start!");
+		
+		String colNm = "MelonTop50_20210415"; //조회할 컬렉션명
+		String singer = "아이유"; //조회할 가수
+		
+		//노래별 랭킹 비교결과 가져오기
+		List<MelonSongDTO> rList = melonMapper.getSongForSinger(colNm, singer);
+		
+		if (rList == null) {
+			rList = new ArrayList<MelonSongDTO>();
+		}
+		
+		log.info(this.getClass().getName() + ".getSongForSinger End!");
 		
 		return rList;
 	}

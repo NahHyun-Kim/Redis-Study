@@ -3,6 +3,7 @@ package poly.service;
 import java.util.List;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSongDTO;
 
 public interface IMelonService {
 	
@@ -15,4 +16,9 @@ public interface IMelonService {
 	 * MongoDB 멜론 데이터 가져오기
 	 * */
 	public List<MelonDTO> getRank() throws Exception;
+	
+	/**
+	 * MongoDB 가수의 노래 데이터 가져오기
+	 * */
+	public List<MelonSongDTO> getSongForSinger() throws Exception;
 }

@@ -10,10 +10,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSongDTO;
 import poly.persistance.mongo.IMelonMapper;
 import poly.util.CmmUtil;
 
@@ -119,6 +121,51 @@ public class MelonMapper implements IMelonMapper {
 		}
 
 		log.info(this.getClass().getName() + ".getRank End!");
+		
+		return rList;
+	}
+
+	@Override
+	public List<MelonSongDTO> getSongForSinger(String colNm, String singer) throws Exception {
+
+		log.info(this.getClass().getName() + ".getSongForSinger Start!");
+	
+		//데이터를 가져올 컬렉션 선택
+		DBCollection rCol = mongodb.getCollection(colNm);
+		
+		//쿼리 만들기(where조건)
+		BasicDBObject query = new BasicDBObject();
+		query.put("singer", singer);
+		
+		//쿼리 실행하기
+		Cursor cursor = rCol.find(query);
+		
+		//컬렉션으로부터 전체 데이터 가져온 것을 List 형태로 저장하기 위한 변수 선언
+		List<MelonSongDTO> rList = new ArrayList<MelonSongDTO>();
+		
+		MelonSongDTO rDTO = null;
+		
+		while (cursor.hasNext()) {
+			
+			rDTO = new MelonSongDTO();
+			
+			final DBObject current = cursor.next();
+			
+			String rank = CmmUtil.nvl((String)current.get("rank")); //순위
+			String song = CmmUtil.nvl((String)current.get("song")); //노래
+			
+			log.info("song : " + song);
+			
+			rDTO.setRank(rank);
+			rDTO.setSong(song);
+			
+			rList.add(rDTO); //List에 데이터 저장
+			
+			rDTO = null;
+			
+		}
+		
+		log.info(this.getClass().getName() + ".getSongForSinger End!");
 		
 		return rList;
 	}

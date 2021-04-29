@@ -3,6 +3,7 @@ package poly.persistance.mongo;
 import java.util.List;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonSongDTO;
 
 public interface IMelonMapper {
 	
@@ -27,4 +28,13 @@ public interface IMelonMapper {
 	 * @param colNm 가져올 컬렉션 이름
 	 * */
 	public List<MelonDTO> getRank(String colNm) throws Exception;
+	
+	/**
+	 * MongoDB 가수의 노래 데이터 가져오기
+	 * 
+	 * @param colNm 가져올 컬렉션 이름
+	 * @param singer 가수 이름
+	 * 
+	 */
+	public List<MelonSongDTO> getSongForSinger(String colNm, String singer) throws Exception;
 }
