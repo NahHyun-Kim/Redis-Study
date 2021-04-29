@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import poly.dto.MelonDTO;
+import poly.dto.MelonRankDTO;
 import poly.dto.MelonSingerDTO;
 import poly.dto.MelonSongDTO;
 import poly.service.IMelonService;
@@ -146,6 +147,41 @@ public class MelonController {
 		}
 		
 		log.info(this.getClass().getName() + ".getRankForSinger End!");
+		
+		return rList;
+	}
+	
+	/**
+	 * 노래별 순위 변동 정보 가져오는 일반 화면
+	 * */
+	@RequestMapping(value="melon/melonCompareRank")
+	public String melonCompareRank(HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+		
+		log.info(this.getClass().getName() + ".melonCompareRank Start!");
+		
+		log.info(this.getClass().getName() + ".melonCompareRank End!");
+		
+		return "/melon/melonCompareRank";
+	}
+	
+	/**
+	 * 노래별 순위 변동 정보
+	 * */
+	@RequestMapping(value="melon/getCompareRank")
+	@ResponseBody
+	public List<MelonRankDTO> getCompareRank(HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+		
+		log.info(this.getClass().getName() + ".getCompareRank Start!");
+		
+		List<MelonRankDTO> rList = melonService.getCompareRank();
+		
+		if (rList == null) {
+			rList = new ArrayList<MelonRankDTO>();
+		}
+		
+		log.info(this.getClass().getName() + ".getCompareRank End!");
 		
 		return rList;
 	}
